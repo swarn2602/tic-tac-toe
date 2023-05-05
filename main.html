@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tic-Tac-Toe</title>
+<style>
+table {
+border-collapse: collapse;
+margin: 0 auto;
+}
+td {
+width: 100px;
+height: 100px;
+text-align: center;
+font-size: 48px;
+font-weight: bold;
+border: 1px solid black;
+cursor: pointer;
+}
+td:hover {
+background-color: #eee;
+}
+</style>
+</head>
+<body>
+<table>
+<tr>
+<td id="0"></td>
+<td id="1"></td>
+<td id="2"></td>
+</tr>
+<tr>
+<td id="3"></td>
+<td id="4"></td>
+<td id="5"></td>
+</tr>
+<tr>
+<td id="6"></td>
+<td id="7"></td>
+<td id="8"></td>
+</tr>
+</table>
+<script>
+// Create the game logic
+var game_over = false;
+var player = "X";
+var computer = "O";
+var board_state = ["", "", "", "", "", "", "", "", ""];
+
+function check_win(board_state, player) {
+// Check rows
+for (var i = 0; i < 9; i += 3) {
+if (board_state[i] == player && board_state[i+1] == player && board_state[i+2] == player) {
+return true;
+}
+}
+// Check columns
+for (var i = 0; i < 3; i++) {
+if (board_state[i] == player && board_state[i+3] == player && board_state[i+6] == player) {
+return true;
+}
+}
+// Check diagonals
+if (board_state[0] == player && board_state[4] == player && board_state[8] == player) {
+return true;
+}
+if (board_state[2] == player && board_state[4] == player && board_state[6] == player) {
+return true;
+}
+return false;
+}
+
+function computer_move() {
+// Check if the computer can win
+for (var i = 0; i < 9; i++) {
+if (board_state[i] == "") {
+board_state[i] = computer;
+if (check_win(board_state, computer)) {
+game_over = true;
+alert("Computer wins!");
+return;
+}
+board_state[i] = "";
+}
+}
+// Check if the player can win
+for (var i = 0; i < 9; i++) {
+if (board_state[i] == "") {
+board_state[i] = player;
+if (check_win(board_state, player)) {
+board_state[i] = computer;
+document.getElementById(i).innerHTML = computer;
+if (check_win(board_state, computer)) {
+game_over = true;
+alert("Computer wins!");
+}
+return;
+}
+board_state[i] = "";
+}
+}
+// Choose a random move
+while (true) {
+var i = Math.floor(Math.random() * 9);
+if (board_state[i] == "") {
+board_state[i] = computer;
+document.getElementById(i).innerHTML = computer;
+if (check_win(board_state, computer)) {
+game_over = true;
+alert("Computer wins!");
+}
+return;
+}
+}
+}
+
+function player_move(event) {
+if (game_over) {
+return;
+}
+var id = event.target.id;
+if (board_state[id] != "") {
+return;
+}
+board_state[id] = player;
+event.target.innerHTML = player;
+if (check_win(board_state, player)) {
+game_over = true;
+alert("You win!");
+return;
+}
+computer_move();
+}
+
+// Bind the cells to the player_move function
+var cells = document.getElementsByTagName("td");
+for (var i = 0; i < cells.length; i++) {
+cells[i].addEventListener("click", player_move);
+}
+</script>
+</body>
+</html>
